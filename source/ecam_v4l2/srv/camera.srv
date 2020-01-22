@@ -1,0 +1,7 @@
+#This service file is to streamon or streamoff the camera
+
+string cam_name      #Name of the camera
+
+bool shutdown        #If value is true - streamoff
+                     #If value is false - streamon
+---

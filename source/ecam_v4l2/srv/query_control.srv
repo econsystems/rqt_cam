@@ -1,0 +1,13 @@
+#This service file is used to query control
+
+string cam_name       # Name of the camera
+uint32 id             # Control Id
+---
+uint32 id             # Control Id
+uint32 type           # Control type
+string name           # Control Name
+int32 minimum         # Minimum Value
+int32 maximum         # Maximum Value
+int32 step            # Step Value
+int32 default_value   # Default Value
+int32 cur_value       # Current Value

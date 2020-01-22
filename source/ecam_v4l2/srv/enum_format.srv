@@ -1,0 +1,15 @@
+#This service file is used to enumerate available format,resolution and framerates
+
+string cam_name       # Name of the camera
+int32 type            # If the value is 1 - list of all supported formats are enumerated
+                      # If the value is 2 - list of all supported resolution are enumerated
+                      # If the value is 3 - list of all supported framerates are enumerated
+
+string pix_fmt         # Pixel format
+
+int32 height      # height of the image
+int32 width       # width of the image
+
+---
+
+string[] str          # Requested List

@@ -1,0 +1,9 @@
+#This service file is used to set format, resolution and framerate
+
+string cam_name       # Name of the camera
+string format         # Image Format
+int32 width           # Image Width
+int32 height          # Image Height
+int32 numerator       # Numerator of framerate
+int32 denominator     # Denominator of framerate
+---

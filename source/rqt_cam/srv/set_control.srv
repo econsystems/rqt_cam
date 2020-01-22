@@ -1,0 +1,6 @@
+#This service file is used to set uvc control
+
+string cam_name     #Name of the camera
+int32 id            #Control Id
+int32 value         #Control Value
+---

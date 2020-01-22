@@ -1,0 +1,3 @@
+<launch>
+<node pkg="ecam_v4l2" type="ecam_v4l2_node" name="ecam_v4l2_node" output="screen" required="true" />
+</launch>

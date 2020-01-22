@@ -1,0 +1,17 @@
+<library path="lib/librqt_cam">
+  <class name="rqt_cam/ImageView" type="rqt_cam::ImageView" base_class_type="rqt_gui_cpp::Plugin">
+    <description>
+      A GUI plugin to for streaming E-con Systems cameras.
+    </description>
+    <qtgui>
+      <group>
+        <label>Visualization</label>
+        <icon type="theme">folder</icon>
+        <statustip>Plugins related to visualization.</statustip>
+      </group>
+      <label>Image View</label>
+      <icon type="theme">image-x-generic</icon>
+      <statustip>A GUI plugin to for streaming E-con Systems cameras.</statustip>
+    </qtgui>
+  </class>
+</library>
