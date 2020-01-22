@@ -82,9 +82,10 @@ It also provides UI for changing V4l2 controls and to switch Color space/Compres
 
 ## How to Use
 
-- Build the package using [this Build Manual](https://github.com/econsystems/rqt_cam/tree/master/documents)
+- Build the package using [this Build Manual](https://github.com/e-consystemgit/rqt_cam/tree/master/documents)
 
-- Run the rqt_cam application using [this User Manual](https://github.com/econsystems/rqt_cam/tree/master/documents)
+- Run the rqt_cam application using [this User Manual](https://github.com/e-consystemgit/rqt_cam/tree/master/documents)
+
 
 ## Releases
 
