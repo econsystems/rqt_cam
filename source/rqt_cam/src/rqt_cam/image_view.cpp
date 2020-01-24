@@ -647,33 +647,50 @@ namespace rqt_cam {
   ************************************************************************************************************/
   void ImageView::callbackImage(const rqt_cam::image::ConstPtr& msg)
   {
-    if(msg->format=="uyvy"){
-      cv::Mat mat_src = cv::Mat(msg->height, msg->width, CV_8UC2,(void*)&msg->data[0]);
-      cv::cvtColor(mat_src, conversion_mat_, cv::COLOR_YUV2RGB_UYVY);
-    }else if(msg->format=="mjpg"){
-      cv::Mat Bgr_data;
-      imdecode(cv::Mat(1, msg->length, CV_8U, (void*)&msg->data[0]),cv::IMREAD_COLOR, &Bgr_data);
-      cv::cvtColor(Bgr_data,conversion_mat_, cv::COLOR_BGR2RGB);
-    }else if(msg->format=="mono8"){
-      cv::Mat gray8;
-      cv::Mat(msg->height, msg->width, CV_8UC1, (void*)&msg->data[0]).convertTo(gray8, CV_8U);
-      cv::cvtColor(gray8,conversion_mat_, cv::COLOR_GRAY2BGR);
+    try{
 
-    }else if(msg->format=="mono16"){
-      cv::Mat gray8;
-      ConvertY16toY8((uint16_t*)&msg->data[0],msg->height,msg->width, gray8);
-      cv::cvtColor(gray8,conversion_mat_, cv::COLOR_GRAY2BGR);
-    }else if(msg->format=="mono12"){
-      cv::Mat gray8;
-      ConvertY12toY8((uint8_t*)&msg->data[0],msg->height,msg->width, gray8);
-      cv::cvtColor(gray8,conversion_mat_, cv::COLOR_GRAY2BGR);
+      if(msg->format=="uyvy"){
+        cv::Mat mat_src = cv::Mat(msg->height, msg->width, CV_8UC2,(void*)&msg->data[0]);
+        cv::cvtColor(mat_src, conversion_mat_, cv::COLOR_YUV2RGB_UYVY);
+      }else if (msg->format=="yuyv") {
+        cv::Mat mat_src = cv::Mat(msg->height, msg->width, CV_8UC2,(void*)&msg->data[0]);
+        cv::cvtColor(mat_src, conversion_mat_, cv::COLOR_YUV2RGB_YUYV);
+      }else if(msg->format=="mjpg"){
+        cv::Mat Bgr_data;
+        // Checking whether mjpeg header is valid.
+        if( ((uint8_t*)&msg->data[0])[0] == 0xFF && ((uint8_t*)&msg->data[0])[1] == 0xD8){
+          imdecode(cv::Mat(1, msg->length, CV_8U, (void*)&msg->data[0]),cv::IMREAD_COLOR, &Bgr_data);
+          cv::cvtColor(Bgr_data,conversion_mat_, cv::COLOR_BGR2RGB);
+        }else{
+          return;
+        }
+      }else if(msg->format=="mono8"){
+        cv::Mat gray8;
+        cv::Mat(msg->height, msg->width, CV_8UC1, (void*)&msg->data[0]).convertTo(gray8, CV_8U);
+        cv::cvtColor(gray8,conversion_mat_, cv::COLOR_GRAY2BGR);
+
+      }else if(msg->format=="mono16"){
+        cv::Mat gray8;
+        ConvertY16toY8((uint16_t*)&msg->data[0],msg->height,msg->width, gray8);
+        cv::cvtColor(gray8,conversion_mat_, cv::COLOR_GRAY2BGR);
+      }else if(msg->format=="mono12"){
+        cv::Mat gray8;
+        ConvertY12toY8((uint8_t*)&msg->data[0],msg->height,msg->width, gray8);
+        cv::cvtColor(gray8,conversion_mat_, cv::COLOR_GRAY2BGR);
+      }
+      // image must be copied since it uses the conversion_mat_ for storage which is asynchronously overwritten in the next callback invocation
+      QImage image(conversion_mat_.data,msg->width,msg->height, 3*msg->width, QImage::Format_RGB888);
+      ui_.image_frame->setImage(image);
+      if(save_img){
+        save_img=false;
+        save_image(&msg->data[0],msg->format,msg->length,msg->width,msg->height);
+      }
     }
-    // image must be copied since it uses the conversion_mat_ for storage which is asynchronously overwritten in the next callback invocation
-    QImage image(conversion_mat_.data,msg->width,msg->height, 3*msg->width, QImage::Format_RGB888);
-    ui_.image_frame->setImage(image);
-    if(save_img){
-      save_img=false;
-      save_image(&msg->data[0],msg->format,msg->length,msg->width,msg->height);
+    catch(cv::Exception& e)
+    {
+      qWarning("ImageView.callback_image() while trying to convert image to 'rgb8' an exception was thrown (%s)", e.what());
+      ui_.image_frame->setImage(QImage());
+      return;
     }
   }
 

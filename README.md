@@ -48,6 +48,7 @@ It also provides UI for changing V4l2 controls and to switch Color space/Compres
 ### Supported Color space/Compression:
 	
 * UYVY
+* YUYV
 * MJPG
 * Y8
 * Y12

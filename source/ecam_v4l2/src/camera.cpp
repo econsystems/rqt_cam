@@ -320,7 +320,7 @@ namespace ecam_v4l2
         image->data.resize(2 * frmt.stream_fmt.fmt.pix.width * frmt.stream_fmt.fmt.pix.height);
         memcpy(&image->data[0],buffers[buffer.index].start,2*frmt.stream_fmt.fmt.pix.width*frmt.stream_fmt.fmt.pix.height);
 
-      }else if(frmt.stream_fmt.fmt.pix.pixelformat==V4L2_PIX_FMT_UYVY){
+      }else if(frmt.stream_fmt.fmt.pix.pixelformat==V4L2_PIX_FMT_UYVY ||frmt.stream_fmt.fmt.pix.pixelformat==V4L2_PIX_FMT_YUYV){
 
         image->data.resize(2 * frmt.stream_fmt.fmt.pix.width * frmt.stream_fmt.fmt.pix.height);
         memcpy(&image->data[0],buffers[buffer.index].start,2*frmt.stream_fmt.fmt.pix.width*frmt.stream_fmt.fmt.pix.height);
@@ -369,6 +369,11 @@ namespace ecam_v4l2
     }else if(frmt.stream_fmt.fmt.pix.pixelformat==V4L2_PIX_FMT_UYVY){
 
       image->format = "uyvy";
+      image->data.reserve(2 * frmt.stream_fmt.fmt.pix.height * frmt.stream_fmt.fmt.pix.width);
+
+    }else if(frmt.stream_fmt.fmt.pix.pixelformat==V4L2_PIX_FMT_YUYV){
+
+      image->format = "yuyv";
       image->data.reserve(2 * frmt.stream_fmt.fmt.pix.height * frmt.stream_fmt.fmt.pix.width);
 
     }else if(frmt.stream_fmt.fmt.pix.pixelformat==V4L2_PIX_FMT_Y12){
@@ -523,6 +528,9 @@ namespace ecam_v4l2
         break;
       case V4L2_PIX_FMT_UYVY:
         *pixelformat = "UYVY";
+        break;
+      case V4L2_PIX_FMT_YUYV:
+        *pixelformat = "YUYV";
         break;
       case V4L2_PIX_FMT_GREY:
         *pixelformat = "GREY";

@@ -140,6 +140,7 @@ namespace rqt_cam{
   int Controls::enum_format(int type,std::string pix_fmt,int width,int height)
   {
     int index;
+    char dummy_char;
     ros::NodeHandle node_handle;
     ros::ServiceClient enum_format_client = node_handle.serviceClient<rqt_cam::enum_format>("EnumerateFormat");
     rqt_cam::enum_format fmt_msg;
@@ -166,6 +167,8 @@ namespace rqt_cam{
           for (index=0 ;index< fmt_msg.response.str.size(); index++){
             resolutions.push_back(fmt_msg.response.str[index]);
           }
+          std::istringstream temp1_stream(resolutions[0]);
+          temp1_stream >>width >> dummy_char >> height; // Getting currently enumerated height and width.
         }else {
           ROS_ERROR("Failed to call service Format_setting");
           break;
