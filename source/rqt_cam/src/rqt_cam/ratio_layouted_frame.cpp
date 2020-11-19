@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Dirk Thomas, TU Darmstadt
+ * Copyright (c) 2020, e-consystems
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
- *   * Neither the name of the TU Darmstadt nor the names of its
+ *   * Neither the name of the e-consystems nor the names of its
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -29,6 +29,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 
 #include <rqt_cam/ratio_layouted_frame.h>
 
@@ -49,20 +50,20 @@ namespace rqt_cam {
   RatioLayoutedFrame::~RatioLayoutedFrame()
   {
   }
-  /************************************************************************************************************
+  /*****************************************************************************
   *  Name	:	getImage.
   *  Returns : const QImage& - image
   *  Description	:   This function is to get the image.
-  ************************************************************************************************************/
+  *****************************************************************************/
   const QImage& RatioLayoutedFrame::getImage() const
   {
     return qimage_;
   }
-  /************************************************************************************************************
+  /*****************************************************************************
   *  Name	:	getImageCopy.
   *  Returns : QImage - image
   *  Description	:   This function is to get the copy of the image.
-  ************************************************************************************************************/
+  *****************************************************************************/
   QImage RatioLayoutedFrame::getImageCopy() const
   {
     QImage img;
@@ -71,11 +72,11 @@ namespace rqt_cam {
     qimage_mutex_.unlock();
     return img;
   }
-  /************************************************************************************************************
+  /*****************************************************************************
   *  Name	:	setImage.
   *  Returns : const QImage& image - image
-  *  Description	:   This function is to set the image in the correct aspect ratio .
-  ************************************************************************************************************/
+  *  Description	:This function is to set the image in the correct aspect ratio.
+  *****************************************************************************/
   void RatioLayoutedFrame::setImage(const QImage& image)//, QMutex* image_mutex)
   {
     qimage_mutex_.lock();
@@ -84,10 +85,10 @@ namespace rqt_cam {
     qimage_mutex_.unlock();
     emit delayed_update();
   }
-  /************************************************************************************************************
+  /*****************************************************************************
   *  Name	:	resizeToFitAspectRatio.
-  *  Description	:   This function is to resie the layout to fit the aspect ratio .
-  ************************************************************************************************************/
+  *  Description	:This function is to resie the layout to fit the aspect ratio.
+  *****************************************************************************/
   void RatioLayoutedFrame::resizeToFitAspectRatio()
   {
     QRect rect = contentsRect();
@@ -111,7 +112,8 @@ namespace rqt_cam {
     }
 
     double layout_ar = width / height;
-    const double image_ar = double(aspect_ratio_.width()) / double(aspect_ratio_.height());
+    const double image_ar = double(aspect_ratio_.width()) /
+                            double(aspect_ratio_.height());
     if (layout_ar > image_ar)
     {
       // too large width
@@ -129,20 +131,20 @@ namespace rqt_cam {
     int border = lineWidth();
     resize(rect.width() + 2 * border, rect.height() + 2 * border);
   }
-  /************************************************************************************************************
+  /*****************************************************************************
   *  Name	:	setOuterLayout.
   *  Parameter1 : QVBoxLayout* outer_layout - Vertical layout box.
   *  Description	:   This function is to set the outer layout .
-  ************************************************************************************************************/
+  *****************************************************************************/
   void RatioLayoutedFrame::setOuterLayout(QVBoxLayout* outer_layout)
   {
     outer_layout_ = outer_layout;
   }
-  /************************************************************************************************************
+  /*****************************************************************************
   *  Name	:	setInnerFrameMinimumSize.
   *  Parameter1 : const QSize& size - size of the frame
   *  Description	:   This function is to set the minimum inner frame size .
-  ************************************************************************************************************/
+  *****************************************************************************/
   void RatioLayoutedFrame::setInnerFrameMinimumSize(const QSize& size)
   {
     int border = lineWidth();
@@ -151,11 +153,11 @@ namespace rqt_cam {
     setMinimumSize(new_size);
     emit delayed_update();
   }
-  /************************************************************************************************************
+  /*****************************************************************************
   *  Name	:	setInnerFrameMaximumSize.
   *  Parameter1 : const QSize& size - size of the frame
   *  Description	:   This function is to set the maximum inner frame size .
-  ************************************************************************************************************/
+  *****************************************************************************/
   void RatioLayoutedFrame::setInnerFrameMaximumSize(const QSize& size)
   {
     int border = lineWidth();
@@ -164,23 +166,23 @@ namespace rqt_cam {
     setMaximumSize(new_size);
     emit delayed_update();
   }
-  /************************************************************************************************************
+  /*****************************************************************************
   *  Name	:	setInnerFrameFixedSize.
   *  Parameter1 : const QSize& size - size of the frame
   *  Description	:   This function is to set the fixed inner frame size .
-  ************************************************************************************************************/
+  *****************************************************************************/
   void RatioLayoutedFrame::setInnerFrameFixedSize(const QSize& size)
   {
     setInnerFrameMinimumSize(size);
     setInnerFrameMaximumSize(size);
   }
-  /************************************************************************************************************
+  /*****************************************************************************
   *  Name	:	setAspectRatio.
   *  Parameter1 : unsigned short width - width of the frame
   *  Parameter1 : unsigned short height - height of the frame
   *  Description	:   This function is to set the Aspect ratio .
-  ************************************************************************************************************/
-  void RatioLayoutedFrame::setAspectRatio(unsigned short width, unsigned short height)
+  *****************************************************************************/
+  void RatioLayoutedFrame::setAspectRatio(unsigned short width,unsigned short height)
   {
     int divisor = greatestCommonDivisor(width, height);
     if (divisor != 0) {
@@ -188,11 +190,11 @@ namespace rqt_cam {
       aspect_ratio_.setHeight(height / divisor);
     }
   }
-  /************************************************************************************************************
+  /*****************************************************************************
   *  Name	:	setAspectRatio.
   *  Parameter1 : QPaintEvent* event - Paint event
   *  Description	:   This function is to Paint the frame in the UI.
-  ************************************************************************************************************/
+  *****************************************************************************/
   void RatioLayoutedFrame::paintEvent(QPaintEvent* event)
   {
     QPainter painter(this);
@@ -209,8 +211,10 @@ namespace rqt_cam {
         if (contentsRect().width() == qimage_.width()) {
           painter.drawImage(contentsRect(), qimage_);
         } else {
-          QImage image = qimage_.scaled(contentsRect().width(), contentsRect().height(),
-                                        Qt::KeepAspectRatio, Qt::SmoothTransformation);
+          QImage image = qimage_.scaled(contentsRect().width(),
+                                        contentsRect().height(),
+                                        Qt::KeepAspectRatio,
+                                        Qt::SmoothTransformation);
           painter.drawImage(contentsRect(), image);
         }
       }
@@ -224,13 +228,13 @@ namespace rqt_cam {
     }
     qimage_mutex_.unlock();
   }
-  /************************************************************************************************************
+  /*****************************************************************************
   *  Name	:	greatestCommonDivisor.
   *  Parameter1 : int value1
   *  Parameter1 : int value2
   *  Returns : int - greatest Common Divisor of value1 and value2.
-  *  Description	:   This function is to get the greatest Common Divisor between two values.
-  ************************************************************************************************************/
+  *  Description :This function is to get the greatest Common Divisor.
+  *****************************************************************************/
   int RatioLayoutedFrame::greatestCommonDivisor(int value1, int value2)
   {
     if (value2==0)
@@ -239,11 +243,11 @@ namespace rqt_cam {
     }
     return greatestCommonDivisor(value2, value1 % value2);
   }
-  /************************************************************************************************************
+  /*****************************************************************************
   *  Name	:	mousePressEvent.
   *  Parameter1 : QMouseEvent * mouseEvent - Mouse pressed event
   *  Description	:   This function is called when mouse is pressed.
-  ************************************************************************************************************/
+  *****************************************************************************/
   void RatioLayoutedFrame::mousePressEvent(QMouseEvent * mouseEvent)
   {
     if(mouseEvent->button() == Qt::LeftButton)
@@ -252,11 +256,11 @@ namespace rqt_cam {
     }
     QFrame::mousePressEvent(mouseEvent);
   }
-  /************************************************************************************************************
+  /*****************************************************************************
   *  Name	:	onSmoothImageChanged.
   *  Parameter1 : bool checked - true if smoothImage_ button is pressed.
   *  Description	:   This function is called when smoothImage_ is pressed.
-  ************************************************************************************************************/
+  *****************************************************************************/
   void RatioLayoutedFrame::onSmoothImageChanged(bool checked) {
     smoothImage_ = checked;
   }

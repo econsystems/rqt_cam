@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Dirk Thomas, TU Darmstadt
+ * Copyright (c) 2020, e-consystems
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
- *   * Neither the name of the TU Darmstadt nor the names of its
+ *   * Neither the name of the e-consystems nor the names of its
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -30,15 +30,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 #ifndef rqt_cam_H
 #define rqt_cam_H
 
 #include <rqt_gui_cpp/plugin.h>
 #include <fcntl.h>
+#include <signal.h>
 #include <pluginlib/class_list_macros.h>
 #include <ui_image_view.h>
-#include <opencv2/core/core.hpp>
-#include <opencv2/imgcodecs.hpp>
 #include <cv_bridge/cv_bridge.h>
 #include <QAction>
 #include <QImage>
@@ -46,11 +46,22 @@
 #include <QObject>
 #include <QMessageBox>
 #include <QMainWindow>
-#include <rqt_cam/controls.h>
+#include <QMouseEvent>
+#include <QEvent>
 #include <rqt_cam/ui.h>
+#include <rqt_cam/conversion.h>
 #include "rqt_cam/image.h"
-#define ON false
-#define OFF true
+#define ON              false
+#define OFF             true
+#define BPP_FOR_Y8      1
+#define BPP_FOR_RGB     3
+enum y16formatcameras
+{
+  OTHER,
+  SEE3CAM_CU40,
+  SEE3CAM_20CUG,
+};
+#define realloc_buffer(h,w,bpp) DestBuffer=(unsigned char*)realloc(DestBuffer,h*w*bpp);
 namespace rqt_cam {
 
   class ImageView : public rqt_gui_cpp::Plugin
@@ -61,29 +72,15 @@ namespace rqt_cam {
     private:
 
       QAction* hide_toolbar_action_;
-
-      UserInterface usr;    // object of class UserInterface.
-      Controls ctl;         // object of class Controls.
-      struct controlid ids; // Structure variable of struct controlid.
-
-      int width,height,fps_numerator,fps_denominator;
+      UserInterface usr;          // object of class UserInterface.
+      Conversion cvrt;            // object of class Conversion.
       int image_count;
-      std::string format;
-      std::string prev_cam_name; // to store previously selected
+      int old_index;
+      std::string prev_cam_name;  // to store previously selected
       bool save_img;
-      bool y16FormatFor20CUG;
+      y16formatcameras y16Format; /* value will be based on camera.
+                                     See y16formatcameras enum*/
 
-      // signal and slot connections
-      QMetaObject::Connection brightnessSlider_connection,contrastSlider_connection,panSlider_connection,
-      saturationSlider_connection,tiltSlider_connection,zoomSlider_connection,backlightSlider_connection,
-      exposureSlider_connection,focusSlider_connection,focus_abs_Slider_connection,gainSlider_connection,
-      gammaSlider_connection,hueSlider_connection,sharpnessSlider_connection,whitebalanceSlider_connection,
-      wb_auto_checkbox_connection,focus_auto_checkbox_connection,exposure_auto_checkbox_connection,
-      format_cmb_connection,resolution_cmb_connection,fps_cmb_connection,brightness_val_connection,
-      contrast_val_connection,pan_val_connection,saturation_val_connection,tilt_val_connection,
-      zoom_val_connection,backlight_val_connection,exposure_val_connection,focus_val_connection,
-      focus_abs_val_connection,gain_val_connection,gamma_val_connection,hue_val_connection,
-      sharpness_val_connection,whitebalance_val_connection,reset_button_connection,save_as_raw;
 
     protected:
 
@@ -93,19 +90,19 @@ namespace rqt_cam {
 
       ros::Subscriber subscriber_;
 
-      cv::Mat conversion_mat_;
+      cv::Mat input_mat_,output_mat_;
+
+      unsigned char  *DestBuffer;
+
+      virtual void check_camera_name(QString topic);
 
       virtual QSet<QString> getTopics(const QSet<QString>& message_types);
 
       virtual void selectTopic(const QString& topic);
 
-      virtual void prepare_format(std::string *format,int *width,int *height,int *numerator, int *denominator);
-
-      virtual void disconnect_ui_widgets();
-
-      virtual void connect_ui_widgets();
-
       virtual void callbackImage(const rqt_cam::image::ConstPtr& msg);
+
+      bool eventFilter(QObject *obj, QEvent *ev);
 
     protected slots:
 
@@ -115,27 +112,11 @@ namespace rqt_cam {
 
       virtual void onSaveImagePressed();
 
-      virtual void save_image(const unsigned char *buffer,std::string format,int length,int width,int height);
-
       virtual void onHideToolbarChanged(bool hide);
 
-      virtual void onSliderChange(int32_t controlId,int value);
+      virtual void save_image(const unsigned char *buffer,std::string format,
+                              int length,int width,int height);
 
-      virtual void onCurrentValChanged(int32_t controlId,int value);
-
-      virtual void onCheckBoxChanged(int32_t controlId,int state);
-
-      virtual void onFormatChange(int index);
-
-      virtual void onResolutionChange(int index);
-
-      virtual void onFpsChange(int index);
-
-      virtual void onResetPressed();
-
-      bool ConvertY12toY8(uchar * Y12Buff,int height,int width, cv::Mat &Y8Buff);
-
-      bool ConvertY16toY8(uint16_t * Y16Buff,int height,int width, cv::Mat &YUYVBuff);
 
     public:
 

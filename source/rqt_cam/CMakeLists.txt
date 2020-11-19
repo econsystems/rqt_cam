@@ -1,11 +1,11 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 
 project(rqt_cam)
 
 add_compile_options(-std=c++11)
 
 # Load catkin and all dependencies required for this package
-find_package(catkin REQUIRED COMPONENTS rqt_gui rqt_gui_cpp message_generation cv_bridge)
+find_package(catkin REQUIRED COMPONENTS rqt_gui rqt_gui_cpp message_generation)
 find_package(OpenCV REQUIRED)
 if("${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")
   find_package(Qt5Widgets REQUIRED)
@@ -17,15 +17,19 @@ endif()
 set(rqt_cam_SRCS
   src/rqt_cam/image_view.cpp
   src/rqt_cam/ratio_layouted_frame.cpp
-  src/rqt_cam/controls.cpp
+  src/rqt_cam/srv_clients.cpp
   src/rqt_cam/ui.cpp
+  src/rqt_cam/conversion.cpp
+ 
 )
 
 set(rqt_cam_HDRS
   include/rqt_cam/image_view.h
   include/rqt_cam/ratio_layouted_frame.h
-  include/rqt_cam/controls.h
+  include/rqt_cam/srv_clients.h
   include/rqt_cam/ui.h
+  include/rqt_cam/conversion.h
+
 )
 
 set(rqt_cam_UIS
@@ -56,7 +60,7 @@ generate_messages(DEPENDENCIES std_msgs)
 catkin_package(
   INCLUDE_DIRS ${rqt_cam_INCLUDE_DIRECTORIES}
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS rqt_gui rqt_gui_cpp cv_bridge message_runtime
+  CATKIN_DEPENDS rqt_gui rqt_gui_cpp message_runtime
 )
 if("${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")
   qt5_wrap_cpp(rqt_cam_MOCS ${rqt_cam_HDRS})
@@ -75,8 +79,9 @@ set(CMAKE_CURRENT_BINARY_DIR "${_cmake_current_binary_dir}")
 
 include_directories(${rqt_cam_INCLUDE_DIRECTORIES} ${catkin_INCLUDE_DIRS})
 include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(${Qt5Widgets_INCLUDE_DIRS})
 add_library(${PROJECT_NAME} ${rqt_cam_SRCS} ${rqt_cam_MOCS} ${rqt_cam_UIS_H})
-add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBRARIES})
 if("${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")

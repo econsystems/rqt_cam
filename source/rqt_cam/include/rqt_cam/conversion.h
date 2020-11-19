@@ -30,89 +30,34 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef rqt_cam__RatioLayoutedFrame_H
-#define rqt_cam__RatioLayoutedFrame_H
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <ros/ros.h>
+#include <linux/videodev2.h>
+/* MACRO FOR BAYER10 TO RGB24 */
 
-#include <QFrame>
-#include <QImage>
-#include <QLayout>
-#include <QLayoutItem>
-#include <QMutex>
-#include <QPainter>
-#include <QRect>
-#include <QSize>
-#include <QWidget>
-#include <QObject>
+#define Bay(x, y, w) bayerIRBuffer[(x) + (w) * (y)]
+#define CLIP(x) (((x) >= 255)? 255 : (x))
 
-namespace rqt_cam {
+namespace rqt_cam{
 
-/**
-* RatioLayoutedFrame is a layout containing a single frame with a fixed aspect ratio.
-* The default aspect ratio is 4:3.
-*/
-  class RatioLayoutedFrame : public QFrame
+  class Conversion
   {
-
-    Q_OBJECT
-
     private:
-
-      static int greatestCommonDivisor(int a, int b);
-
-      void mousePressEvent(QMouseEvent * mouseEvent);
-
-      QVBoxLayout* outer_layout_;
-
-      QSize aspect_ratio_;
-
-      QImage qimage_;
-
-      mutable QMutex qimage_mutex_;
-
-    protected slots:
-
-      void onSmoothImageChanged(bool checked);
-
-    signals:
-
-      void delayed_update();
-
-      void mouseLeft(int x, int y);
-
-    protected:
-
-      void setAspectRatio(unsigned short width, unsigned short height);
-
-      void paintEvent(QPaintEvent* event);
-
-      bool smoothImage_;
-
+      unsigned short int *bayerIRBuffer;
     public:
+      void ConvertY12toY8(uchar * Y12Buff,int height,int width, unsigned char *Y8Buff);
 
-      RatioLayoutedFrame(QWidget* parent, Qt::WindowFlags flags = 0);
+      void ConvertY16toY8(uchar * Y16Buff,int height,int width,unsigned char *Y8Buff);
 
-      virtual ~RatioLayoutedFrame();
+      void ConvertY16toY8for20CUG(uint16_t * Y16Buff,int height,int width,unsigned char *Y8Buff);
 
-      const QImage& getImage() const;
+      void ConvertY16toRGB(void * Y16Buff,int height,int width,unsigned char  *RGBDestBuffer);
 
-      QImage getImageCopy() const;
+      void ConvertBY8toRGB(uint8_t *bayer, int width, int height, uint8_t *bgr);
 
-      void setImage(const QImage& image);
-
-      QRect getAspectRatioCorrectPaintArea();
-
-      void resizeToFitAspectRatio();
-
-      void setOuterLayout(QVBoxLayout* outer_layout);
-
-      void setInnerFrameMinimumSize(const QSize& size);
-
-      void setInnerFrameMaximumSize(const QSize& size);
-
-      void setInnerFrameFixedSize(const QSize& size);
-
+      void convert_border_bayer_line_to_bgr24( uint8_t* bayer, uint8_t* adjacent_bayer,
+          uint8_t *bgr, int width, uint8_t start_with_green, uint8_t blue_line);
   };
 
 }
-
-#endif // rqt_cam__RatioLayoutedFrame_H

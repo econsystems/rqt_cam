@@ -13,3 +13,4 @@ int32 width       # width of the image
 ---
 
 string[] str          # Requested List
+string cur_val        # Current format or resolution or fps based on type value.

@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
 )
+add_definitions(-std=c++11 -Wall -g)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules (libudev REQUIRED libudev)
 
@@ -34,17 +35,23 @@ INCLUDE_DIRS include
 LIBRARIES ecam_v4l2
 CATKIN_DEPENDS std_msgs roscpp message_runtime
 )
-
+add_library(ecam_v4l2
+  src/camera.cpp
+  src/device.cpp
+  src/srv_servers.cpp
+  )
 ## Declare a C++ library
-add_executable(ecam_v4l2_node src/ecam_v4l2.cpp src/camera.cpp src/device.cpp src/services.cpp)
+add_executable(ecam_v4l2_node
+		src/ecam_v4l2.cpp
+ )
 target_link_libraries(${PROJECT_NAME}_node
+   ecam_v4l2
    ${catkin_LIBRARIES}
    ${libudev_LIBRARIES}
  )
-#add_library(ecam_v4l2
-#src/ecam_v4l2.cpp
-#src/camera.cpp)
+
+
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
- add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+ add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

@@ -1,7 +1,9 @@
 #This service file is used to query control
 
 string cam_name       # Name of the camera
-uint32 id             # Control Id
+uint32 id             # Control Id 
+uint32 reqtype        # Query Control or Query Menu
+uint32 index          # Query Menu Index
 ---
 uint32 id             # Control Id
 uint32 type           # Control type
