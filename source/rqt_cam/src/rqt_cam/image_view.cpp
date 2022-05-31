@@ -217,10 +217,17 @@ namespace rqt_cam {
     if(topic.contains("See3CAM_20CUG")){
       y16Format=SEE3CAM_20CUG;
       return;
+    }else if (topic.contains("See3CAM_CU135M_H01R1")){
+      y16Format=SEE3CAM_20CUG;
+      return;
+    }else if (topic.contains("See3CAM_CU135M_H03R1")){
+      y16Format=SEE3CAM_20CUG;
+      return;
     }else if (topic.contains("See3CAM_CU40")){
       y16Format=SEE3CAM_CU40;
       return;
-    }else{
+    }
+    else{
       y16Format=OTHER;
     }
 

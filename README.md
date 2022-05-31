@@ -1,8 +1,8 @@
 
 
 # rqt_cam : Open Source ROS V4L2 Camera Plugin
- 
-High performance video capture using Video4Linux2. This package consists of a publisher node (ecam_v4l2) and an image viewer plugin(rqt_cam). 
+
+High performance video capture using Video4Linux2. This package consists of a publisher node (ecam_v4l2) and an image viewer plugin(rqt_cam).
 
 ## ecam_v4l2
 
@@ -31,22 +31,22 @@ It also provides UI for changing V4l2 controls and to switch Color space/Compres
 ### Supported v4l2 controls:
 * Brightness
 * Contrast
-* Saturation 
+* Saturation
 * Sharpness
 * Gamma
 * Gain
 * Hue
 * White Balance
-* Zoom 
+* Zoom
 * Pan
 * Tilt
 * Exposure
 * Focus (Absolute)
 * Focus
-* Backlight Compensation 
+* Backlight Compensation
 
 ### Supported Color space/Compression:
-	
+
 * UYVY
 * YUYV
 * MJPG
@@ -57,7 +57,7 @@ It also provides UI for changing V4l2 controls and to switch Color space/Compres
 ### Supported E-con Camera's
 #### USB Camera
 
-	* See3CAM_CU20 
+	* See3CAM_CU20
 	* See3CAM_CU30
 	* See3CAM_CU38
 	* See3CAMCU50
@@ -71,14 +71,16 @@ It also provides UI for changing V4l2 controls and to switch Color space/Compres
 	* See3CAM_130 Autofocus
 	* See3CAM_CU55M
 	* See3CAM_20CUG
+  * See3CAM_CU135M_H01R1
+  * See3CAM_CU135M_H03R1
 #### MIPI camera
-	* e-CAM130_CUXVR 
+	* e-CAM130_CUXVR
 
 
 ## Prerequisites
 
-- For Ubuntu 16.04 [ROS Kinetic](http://wiki.ros.org/kinetic/Installation/Ubuntu) 
- 
+- For Ubuntu 16.04 [ROS Kinetic](http://wiki.ros.org/kinetic/Installation/Ubuntu)
+
 - For Ubuntu 18.04 [ROS Melodic](http://wiki.ros.org/melodic/Installation/Ubuntu)
 
 ## How to Use
@@ -99,4 +101,3 @@ It also provides UI for changing V4l2 controls and to switch Color space/Compres
 ## Support
 
 If you need assistance, visit at https://www.e-consystems.com/create-ticket.asp or contact us at techsupport@e-consystems.com
-	
